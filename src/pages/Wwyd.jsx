@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Baby, Heart, Sparkles, Star, Smile, HeartHandshake } from 'lucide-react';
+import { useStardust } from '../context/StardustContext'; // Stardust is connected!
+import confetti from 'canvas-confetti';
 
-// --- The Scenarios (All 60 included!) ---
+// --- The Scenarios ---
 const baseScenarios = [
-  // --- SLEEP SCENARIOS ---
   { id: 1, title: "The Midnight Blowout", situation: "It's 3 AM. Baby just had a massive diaper blowout that reached their neck. Do you...", options: [{ text: "Do a full bath. It's the only way.", votes: 30 }, { text: "Wipe them down as best as possible and deal with it tomorrow.", votes: 70 }], message: "Survival mode activated! We've all chosen the wet wipes at 3 AM. 🛁" },
   { id: 2, title: "The Car Seat Nap Trap", situation: "You just pulled into the driveway and the baby finally fell asleep. Do you...", options: [{ text: "Sit in the car and scroll on your phone until they wake up.", votes: 85 }, { text: "Risk it all and try the crib transfer.", votes: 15 }], message: "Ah, the driveway doomscroll. Enjoy the peace and quiet! 🚗" },
   { id: 3, title: "The Pacifier Drop", situation: "Baby drops their pacifier on the floor at the grocery store. You don't have a backup. Do you...", options: [{ text: "Wipe it on your shirt and pop it back in.", votes: 60 }, { text: "Find a bathroom to wash it with soap and water.", votes: 40 }], message: "A little dirt never hurt, right? The immune system is working hard today. 🦠" },
@@ -14,8 +15,6 @@ const baseScenarios = [
   { id: 8, title: "The Contact Nap", situation: "Baby will only nap while laying on you, but you really have to pee. Do you...", options: [{ text: "Hold it in for the next hour.", votes: 60 }, { text: "Attempt the highly dangerous 'sleeping baby bathroom trip'.", votes: 40 }], message: "Bladders of steel! The things we do for a sleeping baby. 🚽" },
   { id: 9, title: "The Sleep Sack Struggle", situation: "It's bedtime and the baby's favorite sleep sack is in the wash. Do you...", options: [{ text: "Use the backup sack and hope for the best.", votes: 30 }, { text: "Pull it out wet and aggressively blow-dry it.", votes: 70 }], message: "Whatever it takes to protect the bedtime routine! 💨" },
   { id: 10, title: "The Daylight Savings Dread", situation: "Clocks fall back, meaning 6 AM is now 5 AM. Do you...", options: [{ text: "Try shifting their schedule days in advance.", votes: 40 }, { text: "Do nothing and just suffer when the day comes.", votes: 60 }], message: "Daylight savings was definitely invented by someone without kids. ⏰" },
-
-  // --- FEEDING & SOLIDS ---
   { id: 11, title: "The Spit-Up Wardrobe", situation: "You just put on a clean shirt to leave the house, and the baby spits up on your shoulder. Do you...", options: [{ text: "Change your shirt again.", votes: 30 }, { text: "Wipe it off with a burp cloth and wear it like a badge of honor.", votes: 70 }], message: "Baby spit-up is just an accessory at this point. 🍼" },
   { id: 12, title: "The Food Thrower", situation: "Baby discovers gravity and starts throwing all their purees on the floor. Do you...", options: [{ text: "Keep picking it up and saying 'No'.", votes: 40 }, { text: "Let the dog handle the cleanup.", votes: 60 }], message: "Dogs are the real MVPs of the toddler years! 🐶" },
   { id: 13, title: "The Taste Test", situation: "You're warming up a bottle and need to check the temperature. Do you...", options: [{ text: "Squeeze a drop on your wrist.", votes: 75 }, { text: "Take a tiny sip yourself.", votes: 25 }], message: "The wrist check is classic, but hey, some of us get curious! 💧" },
@@ -26,8 +25,6 @@ const baseScenarios = [
   { id: 18, title: "The Pumping Problem", situation: "You're pumping at work and realize you forgot the bottles to store it in. Do you...", options: [{ text: "Use your clean coffee mug.", votes: 40 }, { text: "Cry and throw it out.", votes: 60 }], message: "Liquid gold lost! The heartbreak is real. 😭" },
   { id: 19, title: "The Distracted Eater", situation: "Baby is too distracted to finish their bottle. Do you...", options: [{ text: "Walk around the dark room to keep them focused.", votes: 55 }, { text: "Let them be done and try again later.", votes: 45 }], message: "Everything is fascinating when you've only been on earth for a few months! 🌍" },
   { id: 20, title: "The Secret Snack", situation: "You want a piece of chocolate but don't want the baby to want some. Do you...", options: [{ text: "Eat it quickly while hiding behind the fridge door.", votes: 80 }, { text: "Eat it in front of them and tell them it's spicy.", votes: 20 }], message: "The fridge-door-hide is a classic parenting maneuver! 🍫" },
-
-  // --- DIAPERS & BATH TIME ---
   { id: 21, title: "The Mid-Change Fountain", situation: "You take the old diaper off and the baby starts peeing in the air. Do you...", options: [{ text: "Throw a wipe over it like a grenade.", votes: 75 }, { text: "Just stand back and let it happen.", votes: 25 }], message: "Incoming! The wipe shield is your best defense. 🛡️" },
   { id: 22, title: "The Empty Wipes Pack", situation: "You're mid-poopy diaper change and pull out the very last wipe. Do you...", options: [{ text: "Yell for your partner to bring backup.", votes: 70 }, { text: "Use paper towels and water.", votes: 30 }], message: "Communication is key... especially when yelling from the nursery! 🗣️" },
   { id: 23, title: "The Bath Pooper", situation: "Baby is happily splashing in the tub and suddenly... a floater. Do you...", options: [{ text: "Drain it, scrub the tub, and start over.", votes: 65 }, { text: "Scoop it out and quickly finish the bath.", votes: 35 }], message: "Code Brown in the tub! Happens to the best of us. 💩" },
@@ -38,8 +35,6 @@ const baseScenarios = [
   { id: 28, title: "The Sizing Up", situation: "You have one box of size 1 diapers left, but baby is starting to get red marks. Do you...", options: [{ text: "Squeeze them into the 1s until the box is empty.", votes: 35 }, { text: "Donate the 1s and move up to size 2 immediately.", votes: 65 }], message: "Those chubby thighs wait for nobody! 📦" },
   { id: 29, title: "The Public Restroom", situation: "The store restroom doesn't have a changing table. Do you...", options: [{ text: "Change them in the trunk of the car.", votes: 85 }, { text: "Change them on the bathroom floor on a mat.", votes: 15 }], message: "Trunk diaper changes are an essential parent skill! 🚗" },
   { id: 30, title: "The Diaper Strip", situation: "You put baby in the crib and they immediately rip off their own diaper. Do you...", options: [{ text: "Put them in a backwards onesie so they can't reach it.", votes: 70 }, { text: "Lecture a 10-month-old on hygiene.", votes: 30 }], message: "The backwards onesie trick is pure genius. 👕" },
-
-  // --- OUTINGS & SOCIAL ---
   { id: 31, title: "The Chatty Stranger", situation: "A stranger at the store leans way too close to look at the baby. Do you...", options: [{ text: "Politely step back and create distance.", votes: 75 }, { text: "Say 'Oh, we are getting over a cold!' to scare them away.", votes: 25 }], message: "Nothing makes people back up faster than the word 'cold'! 😷" },
   { id: 32, title: "The Grocery Store Meltdown", situation: "Baby is screaming, and your cart is only half full. Do you...", options: [{ text: "Abandon the cart and run for the exit.", votes: 30 }, { text: "Speed run the rest of the aisles while singing to them.", votes: 70 }], message: "Supermarket Sweep: Parenting Edition! 🛒" },
   { id: 33, title: "The Plane Ride", situation: "The seatbelt sign turns on just as the baby starts fussing to walk the aisles. Do you...", options: [{ text: "Bust out the unlimited screen time.", votes: 80 }, { text: "Try to bounce them in your seat while apologizing to neighbors.", votes: 20 }], message: "All rules go out the window on airplanes. Screen time saves lives. ✈️" },
@@ -50,8 +45,6 @@ const baseScenarios = [
   { id: 38, title: "The Loud Sneeze", situation: "Baby finally falls asleep in the carrier while you're shopping. You have to sneeze. Do you...", options: [{ text: "Pinch your nose and swallow the sneeze.", votes: 75 }, { text: "Let it rip and pray they don't wake up.", votes: 25 }], message: "Swallowing a sneeze hurts, but waking a sleeping baby hurts more. 🤧" },
   { id: 39, title: "The Missing Sock", situation: "You arrive at your destination and realize baby only has one sock on. Do you...", options: [{ text: "Take the other one off so they match.", votes: 85 }, { text: "Leave the one on for warmth.", votes: 15 }], message: "Barefoot is better than lopsided! Where do those socks even go? 🧦" },
   { id: 40, title: "The Overdressed Baby", situation: "You dressed them in a cute winter coat, but it's suddenly 75 degrees outside. Do you...", options: [{ text: "Take it off, leaving them in just a plain undershirt.", votes: 60 }, { text: "Let them wear it unzipped so people can see the cute outfit.", votes: 40 }], message: "Weather apps lie. Plain white onesies for the win! ☀️" },
-
-  // --- HEALTH & MILESTONES ---
   { id: 41, title: "The First Fever", situation: "Baby feels warm. You check the temp and it's 100.1. Do you...", options: [{ text: "Call the pediatrician immediately.", votes: 55 }, { text: "Give Tylenol and monitor closely.", votes: 45 }], message: "The first fever is terrifying! You're doing great. 🌡️" },
   { id: 42, title: "The Syringe Spitoon", situation: "You try to give baby medicine and they spit it right back in your face. Do you...", options: [{ text: "Try again by aiming for the cheek pouch.", votes: 70 }, { text: "Mix it into their milk/puree and hope they don't notice.", votes: 30 }], message: "The 'cheek pouch' method is standard medical protocol for babies! 💉" },
   { id: 43, title: "The Nail Clipping Terror", situation: "It's time to clip those razor-sharp baby nails. Do you...", options: [{ text: "Do it while they are sleeping like a stealth ninja.", votes: 80 }, { text: "Distract with TV and do it while they are awake.", votes: 20 }], message: "Stealth mode is the only safe way to handle those little claws. 💅" },
@@ -62,8 +55,6 @@ const baseScenarios = [
   { id: 48, title: "The Teething Drool", situation: "Baby is teething and soaking through a bib every 10 minutes. Do you...", options: [{ text: "Keep changing the bibs.", votes: 40 }, { text: "Let them wear the wet bib and just wipe their chin.", votes: 60 }], message: "It's a waterfall of drool. You can only fight it so much! 🤤" },
   { id: 49, title: "The Couch Climber", situation: "Baby figures out how to climb the couch but not how to get down. Do you...", options: [{ text: "Stand closely behind them to catch them.", votes: 65 }, { text: "Put pillows on the floor and let them learn.", votes: 35 }], message: "Pillow fortresses: saving babies from gravity since the beginning of time. 🛋️" },
   { id: 50, title: "The Snot Sucker", situation: "Baby has a runny nose. Time to use the NoseFrida. Do you...", options: [{ text: "Pin them down and get it done.", votes: 80 }, { text: "Make the other parent do it.", votes: 20 }], message: "It looks gross, it sounds gross, but man does it work! 🤧" },
-
-  // --- PARTNER & HOME LIFE ---
   { id: 51, title: "The Middle of the Night Poke", situation: "Baby cries at 2 AM. You are both pretending to be asleep. Do you...", options: [{ text: "Kick your partner and say 'Your turn.'", votes: 60 }, { text: "Sigh loudly, get up, and hold it against them tomorrow.", votes: 40 }], message: "The 2 AM game of 'sleep chicken' is fierce. 🐔" },
   { id: 52, title: "The Messy House", situation: "In-laws are coming over in 10 minutes. The house looks like a tornado hit. Do you...", options: [{ text: "Shove everything into one closet and lock the door.", votes: 85 }, { text: "Leave it. They know you have a baby.", votes: 15 }], message: "The 'shove and shut' method has saved many households! 🌪️" },
   { id: 53, title: "The Alone Time", situation: "Partner takes the baby out for an hour so you can relax. Do you...", options: [{ text: "Take a hot bath and read a book.", votes: 20 }, { text: "Frantically clean the kitchen and do laundry.", votes: 80 }], message: "Why is it so hard to just sit down when they leave?! 🧹" },
@@ -76,47 +67,56 @@ const baseScenarios = [
   { id: 60, title: "The End of the Day", situation: "Baby is finally asleep for the night. You are exhausted. Do you...", options: [{ text: "Go straight to bed to catch up on sleep.", votes: 30 }, { text: "Stay up too late scrolling your phone for 'me time'.", votes: 70 }], message: "Revenge bedtime procrastination is real. You deserve the quiet time! 🌙" }
 ];
 
-// We will use this array to dynamically assign cute icons to the cards!
 const iconOptions = [Baby, Heart, Sparkles, Star, Smile];
 
 export default function Wwyd() {
+  const { addPoints } = useStardust();
   const [shuffledScenarios, setShuffledScenarios] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
   const [isFinished, setIsFinished] = useState(false);
 
-  // The Magic Randomizer! This runs exactly once when the page first loads.
   useEffect(() => {
-    // 1. Copy the original array
     let shuffled = [...baseScenarios];
-    
-    // 2. Fisher-Yates Shuffle (the best way to truly randomize an array)
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
-    
-    // 3. Save it to state so React can display it
     setShuffledScenarios(shuffled);
   }, []);
 
-  // Show a blank screen for a split second while shuffling prevents errors
   if (shuffledScenarios.length === 0) return null; 
 
   const handleVote = (index) => {
     setSelectedOption(index);
+    
+    // ✨ INSTANT STARDUST REWARD (5 points per vote!) ✨
+    addPoints(5);
+    
+    // Confetti if they pick the most popular answer!
+    const currentScenario = shuffledScenarios[currentIndex];
+    const pickedVotes = currentScenario.options[index].votes;
+    const otherVotes = currentScenario.options[index === 0 ? 1 : 0].votes;
+    
+    if (pickedVotes >= otherVotes) {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#A020F0', '#EEDCFF', '#B2C2A4']
+      });
+    }
   };
 
   const handleNext = () => {
     if (currentIndex + 1 < shuffledScenarios.length) {
       setCurrentIndex(currentIndex + 1);
-      setSelectedOption(null); // Reset the vote for the next card
+      setSelectedOption(null);
     } else {
       setIsFinished(true);
     }
   };
 
-  // The End Screen
   if (isFinished) {
     return (
       <div style={styles.pageContainer}>
@@ -128,7 +128,6 @@ export default function Wwyd() {
           <p style={styles.situation}>Parenting is messy, beautiful, and sometimes chaotic. Thank you for sharing your honest moments with our community.</p>
           <button 
             onClick={() => {
-              // Re-shuffle and start over!
               let reshuffled = [...baseScenarios].sort(() => Math.random() - 0.5);
               setShuffledScenarios(reshuffled);
               setCurrentIndex(0); 
@@ -143,27 +142,21 @@ export default function Wwyd() {
     );
   }
 
-  // Grab the current scenario from our SHUFFLED list
   const currentScenario = shuffledScenarios[currentIndex];
   const hasVoted = selectedOption !== null;
-  
-  // Dynamically pick an icon based on the ID so it stays cute and varied
   const IconComponent = iconOptions[currentScenario.id % iconOptions.length];
 
   return (
     <div style={styles.pageContainer}>
       
-      {/* Header */}
       <div style={styles.header}>
         <span style={styles.badge}>Scenario {currentIndex + 1}</span>
         <h1 style={styles.mainTitle}>What Would You Do?</h1>
         <p style={styles.subtitle}>Real parenting moments. Zero judgment.</p>
       </div>
 
-      {/* The Central Interactive Card */}
       <div style={styles.card}>
         <div style={styles.iconCircle}>
-          {/* Renders the dynamic icon we chose above */}
           <IconComponent size={48} color="var(--primary-purple)" />
         </div>
         
@@ -173,7 +166,6 @@ export default function Wwyd() {
         <div style={styles.optionsContainer}>
           {currentScenario.options.map((option, index) => {
             
-            // IF THEY HAVEN'T VOTED YET: Show clicky buttons
             if (!hasVoted) {
               return (
                 <button 
@@ -186,7 +178,6 @@ export default function Wwyd() {
               );
             }
 
-            // IF THEY HAVE VOTED: Show the beautiful animated results
             const isSelected = selectedOption === index;
             return (
               <div key={index} style={styles.resultRow}>
@@ -212,14 +203,12 @@ export default function Wwyd() {
           })}
         </div>
 
-        {/* The custom encouragement message appears AFTER they vote */}
         {hasVoted && (
           <div style={styles.encouragement}>
             {currentScenario.message}
           </div>
         )}
 
-        {/* The Next Button */}
         {hasVoted && (
           <div style={styles.nextSection}>
             <button onClick={handleNext} style={styles.nextBtn}>
@@ -228,7 +217,6 @@ export default function Wwyd() {
           </div>
         )}
       </div>
-
     </div>
   );
 }
