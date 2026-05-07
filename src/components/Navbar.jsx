@@ -27,12 +27,12 @@ export default function Navbar() {
 
   return (
     <nav style={styles.nav}>
-      {/* Logo */}
+      {/* Logo — always left */}
       <NavLink to="/" style={styles.logo} onClick={() => setMenuOpen(false)}>
         La Perlyn
       </NavLink>
 
-      {/* Desktop links */}
+      {/* Desktop links — right */}
       {!isMobile && (
         <div style={styles.desktopLinks}>
           {navLinks.map(({ to, label }) => (
@@ -54,9 +54,9 @@ export default function Navbar() {
         </div>
       )}
 
-      {/* Mobile: badge + hamburger */}
+      {/* Mobile — stardust badge + hamburger on right */}
       {isMobile && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+        <div style={styles.mobileRight}>
           <div style={styles.badge}>
             <span>✨</span>
             <span>{points}</span>
@@ -100,7 +100,6 @@ const styles = {
     alignItems: 'center',
     padding: '1.2rem 5%',
     flexWrap: 'wrap',
-    position: 'relative',
   },
   logo: {
     fontSize: '2rem',
@@ -135,6 +134,11 @@ const styles = {
     gap: '6px',
     fontSize: '0.9rem',
     boxShadow: '0 4px 10px rgba(160, 32, 240, 0.15)',
+  },
+  mobileRight: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.8rem',
   },
   hamburger: {
     background: 'none',
