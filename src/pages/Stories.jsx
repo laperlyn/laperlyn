@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { useStardust } from '../context/StardustContext';
 
 export default function Stories() {
   const stories = [
@@ -895,6 +896,46 @@ export default function Stories() {
   ];
 
   const [activeStory, setActiveStory] = useState(null);
+  
+  // --- NEW LOGIC STARTS HERE ---
+  const { addPoints } = useStardust();
+  const [isReading, setIsReading] = useState(false);
+  const contentRef = useRef(null);
+
+  // Stop reading if they close the story early
+  useEffect(() => {
+    return () => window.speechSynthesis.cancel();
+  }, [activeStory]);
+
+  // The Voice Reader
+  const toggleSpeech = () => {
+    if (isReading) {
+      window.speechSynthesis.cancel();
+      setIsReading(false);
+    } else {
+      if (contentRef.current) {
+        // Grab the text from the story
+        const textToRead = contentRef.current.innerText;
+        const utterance = new SpeechSynthesisUtterance(textToRead);
+        utterance.rate = 0.85; // Nice, slow, soothing pace
+        utterance.pitch = 1;
+        
+        utterance.onend = () => setIsReading(false);
+        window.speechSynthesis.speak(utterance);
+        setIsReading(true);
+      }
+    }
+  };
+
+  // The Goodnight Button - Stops voice, awards points, closes story
+  const handleFinishStory = () => {
+    window.speechSynthesis.cancel(); 
+    setIsReading(false);
+    addPoints(20); // 🌟 REWARD 20 STARDUST!
+    setActiveStory(null);
+    alert("✨ Sweet dreams! You earned 20 Stardust Points! ✨");
+  };
+  // --- NEW LOGIC ENDS HERE ---
 
   return (
     <div style={styles.nightContainer}>
@@ -907,10 +948,19 @@ export default function Stories() {
           <div style={styles.readerMeta}>
             <span>{activeStory.theme}</span> • <span>{activeStory.readTime}</span>
           </div>
-          <div style={styles.readerContent}>
+
+          {/* THE NEW READ TO ME BUTTON */}
+          <button style={styles.readToMeBtn} onClick={toggleSpeech}>
+            {isReading ? "⏸️ Stop Reading" : "🔊 Read to Me"}
+          </button>
+
+          {/* Notice we added ref={contentRef} here so the reader can find the text */}
+          <div style={styles.readerContent} ref={contentRef}>
             {activeStory.content}
           </div>
-          <button style={styles.finishBtn} onClick={() => setActiveStory(null)}>
+
+          {/* Updated button to use our new handleFinishStory function */}
+          <button style={styles.finishBtn} onClick={handleFinishStory}>
             Goodnight &rarr;
           </button>
         </div>
@@ -1052,6 +1102,22 @@ const styles = {
     marginBottom: '3rem',
     fontWeight: '600',
   },
+  // --- ADD THIS NEW BLOCK ---
+  readToMeBtn: {
+    backgroundColor: '#36224E',
+    color: '#B78CFF',
+    border: '2px solid #5A3A82',
+    padding: '0.8rem 1.5rem',
+    borderRadius: '20px',
+    fontSize: '1.1rem',
+    fontWeight: '800',
+    cursor: 'pointer',
+    marginBottom: '2rem',
+    display: 'inline-flex',
+    alignItems: 'center',
+    transition: 'all 0.2s ease',
+  },
+  // --------------------------
   readerContent: {
     fontSize: '1.4rem',
     lineHeight: '1.8',
