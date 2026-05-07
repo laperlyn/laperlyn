@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
+import { useStardust } from '../context/StardustContext';
 
 // --- The 100 Question Bank ---
-// We move this OUTSIDE the component so it doesn't get recreated every time a user clicks a button
 const baseQuestions = [
     // LEVEL 1 (Questions 1-5)
     { questionText: 'At what distance can a newborn baby see objects clearly?', options: [{ answerText: 'Across the room', isCorrect: false }, { answerText: '8 to 12 inches', isCorrect: true }, { answerText: '3 to 4 feet', isCorrect: false }] },
@@ -146,8 +146,10 @@ const baseQuestions = [
 ];
 
 export default function Quiz() {
+  const { addPoints } = useStardust(); 
+
   // --- Quiz Logic (State) ---
-  const [shuffledQuestions, setShuffledQuestions] = useState([]); // This will hold our randomized list
+  const [shuffledQuestions, setShuffledQuestions] = useState([]); 
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [totalScore, setTotalScore] = useState(0);       
   const [segmentScore, setSegmentScore] = useState(0);   
@@ -160,7 +162,6 @@ export default function Quiz() {
 
   const QUESTIONS_PER_LEVEL = 5;
 
-  // The Magic Randomizer! Shuffles the questions exactly once when the page loads
   useEffect(() => {
     shuffleDeck();
   }, []);
@@ -174,10 +175,8 @@ export default function Quiz() {
     setShuffledQuestions(shuffled);
   };
 
-  // Show a blank screen for a split second while shuffling prevents errors
   if (shuffledQuestions.length === 0) return null;
 
-  // Function that runs when an answer is clicked
   const handleAnswerOptionClick = (isCorrect, index) => {
     if (isAnswered) return; 
 
@@ -188,6 +187,9 @@ export default function Quiz() {
       setTotalScore(totalScore + 1);
       setSegmentScore(segmentScore + 1);
       
+      // ✨ ADDING POINTS IMMEDIATELY UPON A CORRECT ANSWER! ✨
+      addPoints(10); 
+      
       confetti({
         particleCount: 150,
         spread: 70,
@@ -196,19 +198,17 @@ export default function Quiz() {
       });
     }
 
-    // Wait 1.5 seconds, then figure out where to go next
     setTimeout(() => {
       const nextQuestion = currentQuestion + 1;
       
-      // 1. Is it the very end of the whole 100 question quiz?
       if (nextQuestion >= shuffledQuestions.length) {
         setShowFinalScore(true);
+        addPoints(50); // Big bonus for finishing everything
       } 
-      // 2. Is it the end of a 5-question segment?
       else if (nextQuestion % QUESTIONS_PER_LEVEL === 0) {
         setShowSegmentBreak(true);
+        // We removed the level-up reward here since they now get it per question!
       } 
-      // 3. Otherwise, just go to the next question
       else {
         setCurrentQuestion(nextQuestion);
         resetTurn();
@@ -228,7 +228,6 @@ export default function Quiz() {
     resetTurn();
   };
 
-  // Complete reset to play the whole game again with a fresh shuffle!
   const restartGame = () => {
     shuffleDeck();
     setCurrentQuestion(0);
@@ -243,7 +242,6 @@ export default function Quiz() {
     <div style={styles.pageContainer}>
       <div style={styles.quizBox}>
         
-        {/* SCENARIO 1: THE ULTIMATE END OF THE QUIZ */}
         {showFinalScore ? (
           <div style={styles.scoreSection}>
             <h1 style={{ fontSize: '3rem', color: 'var(--primary-purple)', marginBottom: '1rem' }}>
@@ -262,14 +260,12 @@ export default function Quiz() {
               </button>
             </div>
 
-            {/* Added Play Again Button here! */}
             <button onClick={restartGame} style={styles.restartBtn}>
               Play Again ↺
             </button>
           </div>
         ) 
         
-        // SCENARIO 2: THE 5-QUESTION LEVEL BREAK
         : showSegmentBreak ? (
           <div style={styles.scoreSection}>
             <span style={styles.levelBadge}>Level {currentQuestion / QUESTIONS_PER_LEVEL} Complete!</span>
@@ -277,7 +273,7 @@ export default function Quiz() {
               You got {segmentScore} / {QUESTIONS_PER_LEVEL} right!
             </h1>
             <p style={{ fontSize: '1.1rem', marginBottom: '2.5rem', color: 'var(--text-light)' }}>
-              Current Grand Total: {totalScore}. Ready for the next round of questions?
+              Current Grand Total: {totalScore}.
             </p>
             <button onClick={continueToNextLevel} style={styles.submitBtn}>
               Start Next Level &rarr;
@@ -285,7 +281,6 @@ export default function Quiz() {
           </div>
         ) 
         
-        // SCENARIO 3: ACTIVELY ANSWERING QUESTIONS
         : (
           <>
             <div style={styles.questionSection}>
@@ -329,7 +324,6 @@ export default function Quiz() {
   );
 }
 
-// --- Specific Styling ---
 const styles = {
   pageContainer: { padding: '4rem 5%', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '70vh' },
   quizBox: { backgroundColor: '#ffffff', width: '100%', maxWidth: '750px', borderRadius: '35px', padding: '4rem 3rem', boxShadow: '0 20px 50px rgba(160, 32, 240, 0.08)', textAlign: 'center' },
