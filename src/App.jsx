@@ -8,6 +8,7 @@ import Wwyd from './pages/Wwyd';
 import Facts from './pages/Facts';
 import Stories from './pages/Stories';
 import Letter from './pages/Letter';
+import NotFound from './pages/NotFound';
 
 import { StardustProvider } from './context/StardustContext';
 
@@ -25,6 +26,7 @@ function App() {
               <Route path="/facts" element={<Facts />} />
               <Route path="/stories" element={<Stories />} />
               <Route path="/letter" element={<Letter />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
           <Footer />
