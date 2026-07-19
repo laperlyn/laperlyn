@@ -7,7 +7,7 @@ function App() {
       <nav className="navbar">
         <div className="brand">
           {/* Swap the src below for your logo file, e.g. src="logo.svg" */}
-          <img src="//Primary Logo(Black).png" alt="Xvora" className="brand-logo" />
+          <img src="/Primary Logo(Black).png" alt="Xvora" className="brand-logo" />
         </div>
         <ul className="nav-links">
           <li><a href="#" className="active">Home</a></li>
