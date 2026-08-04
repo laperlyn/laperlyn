@@ -1,31 +1,756 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Perlyn — Timeless Elegance, Woven for Every Story</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Annie+Use+Your+Telescope&family=Cormorant+Garamond:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FCF9F5;
+    --panel: #F7F1EA;
+    --lavender: #C5A8DE;
+    --gold: #D4B483;
+    --charcoal: #2F2F2F;
+    --charcoal-soft: rgba(47,47,47,0.68);
+    --line: rgba(47,47,47,0.1);
+    --shadow: 0 20px 50px rgba(47,47,47,0.08);
+    --shadow-soft: 0 10px 30px rgba(47,47,47,0.06);
+    --max: 1280px;
+    --radius: 18px;
+  }
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--cream);
+    color: var(--charcoal);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  
+  h1, h2, h3, .display { font-family: 'Cormorant Garamond', serif; font-weight: 600; letter-spacing: 0.01em; line-height: 1.1; color: var(--charcoal); }
+  .logo-font { font-family: 'Annie Use Your Telescope', cursive; }
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; height: auto; display: block; }
+  ul { list-style: none; }
+  button { font-family: inherit; cursor: pointer; background: none; border: none; }
 
-    <!-- SEO -->
-    <title>Laperlyn – For Their Earliest Days</title>
-    <meta name="description" content="A gentle space to understand your little ones, share parenting stories, and take a quiet moment for yourself. Quizzes, facts, bedtime stories and more." />
-    <meta name="keywords" content="parenting, baby, toddler, kids fashion, bedtime stories, parenting quiz, baby facts" />
-    <meta name="author" content="Laperlyn" />
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 48px; }
+  @media (max-width: 720px) { .wrap { padding: 0 22px; } }
 
-    <!-- Open Graph (WhatsApp, Facebook, LinkedIn previews) -->
-    <meta property="og:title" content="Laperlyn – For Their Earliest Days" />
-    <meta property="og:description" content="A gentle space to understand your little ones, share parenting stories, and take a quiet moment for yourself." />
-    <meta property="og:image" content="/og-image.png" />
-    <meta property="og:url" content="https://laperlyn.com" />
-    <meta property="og:type" content="website" />
+  .eyebrow {
+    font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--gold); font-weight: 500; display: block; margin-bottom: 16px;
+  }
 
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Laperlyn – For Their Earliest Days" />
-    <meta name="twitter:description" content="A gentle space to understand your little ones." />
-    <meta name="twitter:image" content="/og-image.png" />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 15px 34px; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase;
+    border-radius: 999px; font-weight: 500; transition: all .35s ease;
+  }
+  .btn-solid { background: var(--charcoal); color: var(--cream); }
+  .btn-solid:hover { background: var(--lavender); color: var(--charcoal); transform: translateY(-2px); box-shadow: var(--shadow-soft); }
+  .btn-outline { background: transparent; color: var(--cream); border: 1px solid rgba(252,249,245,0.7); }
+  .btn-outline:hover { background: rgba(252,249,245,0.15); border-color: var(--cream); transform: translateY(-2px); }
+  .btn-outline-dark { background: transparent; color: var(--charcoal); border: 1px solid var(--charcoal); }
+  .btn-outline-dark:hover { background: var(--charcoal); color: var(--cream); }
+
+  /* ---------- navbar ---------- */
+  header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 22px 0; transition: background .4s ease, box-shadow .4s ease, padding .3s ease;
+  }
+  header.scrolled { background: rgba(252,249,245,0.95); backdrop-filter: blur(10px); box-shadow: var(--shadow-soft); padding: 14px 0; }
+  
+  .nav { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 20px; }
+  .nav-logo { font-size: 30px; color: var(--cream); transition: color .4s ease; }
+  header.scrolled .nav-logo { color: var(--charcoal); }
+  
+  .nav-center { display: flex; gap: 34px; justify-content: center; font-size: 13px; letter-spacing: 0.04em; color: var(--cream); transition: color .4s ease; }
+  header.scrolled .nav-center { color: var(--charcoal); }
+  .nav-center a { position: relative; padding-bottom: 5px; }
+  .nav-center a::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--gold);
+    transform: scaleX(0); transform-origin: left; transition: transform .3s ease;
+  }
+  .nav-center a:hover::after { transform: scaleX(1); }
+  
+  .nav-right { display: flex; gap: 22px; justify-content: flex-end; align-items: center; color: var(--cream); transition: color .4s ease; }
+  header.scrolled .nav-right { color: var(--charcoal); }
+  .nav-right button { color: inherit; font-size: 17px; position: relative; }
+  
+  .badge {
+    position: absolute; top: -7px; right: -9px; background: var(--lavender); color: var(--charcoal);
+    font-size: 9px; width: 15px; height: 15px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-weight: 600;
+  }
+  
+  .menu-btn { display: none; font-size: 22px; color: var(--cream); }
+  header.scrolled .menu-btn { color: var(--charcoal); }
+  
+  .nav-links-mobile { display: none; }
+
+  @media (max-width: 900px) {
+    .nav-center { display: none; }
+    .menu-btn { display: block; }
+    
+    .nav-links-mobile {
+      display: none; 
+      position: absolute; 
+      top: 100%; left: 0; right: 0; 
+      background: var(--cream);
+      box-shadow: var(--shadow); 
+      padding: 12px 24px 30px; 
+      flex-direction: column;
+      z-index: 99;
+    }
+    .nav-links-mobile.open { display: flex; }
+    .nav-links-mobile a { padding: 16px 0; border-bottom: 1px solid var(--line); color: var(--charcoal); font-size: 16px; font-weight: 400; }
+  }
+
+  /* ---------- hero with image background link ---------- */
+  .hero {
+    position: relative; 
+    height: 100vh; 
+    min-height: 640px; 
+    display: flex; 
+    align-items: center;
+    /* PASTE YOUR DIRECT IMAGE URL IN THE url('...') BELOW */
+    background: 
+      linear-gradient(to right, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.15) 60%, rgba(0, 0, 0, 0.3) 100%),
+      url('/image.png') no-repeat center center;
+    background-size: cover;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: ""; position: absolute; inset: 0;
+    background-image: repeating-linear-gradient(115deg, rgba(255,255,255,0.015) 0 2px, transparent 2px 26px);
+    pointer-events: none; z-index: 1;
+  }
+  .hero-content { position: relative; z-index: 2; color: var(--cream); max-width: 680px; padding: 0 48px; }
+  .hero-content .eyebrow { color: var(--gold); opacity: 0; animation: riseIn .9s ease forwards; animation-delay: .2s; }
+  .hero-content h1 {
+    font-size: clamp(40px, 6vw, 76px); color: var(--cream); margin-bottom: 26px; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    opacity: 0; animation: riseIn 1s ease forwards; animation-delay: .4s;
+  }
+  .hero-content p {
+    font-weight: 300; font-size: 17px; line-height: 1.75;
+    color: rgba(252,249,245,0.92); max-width: 46ch; margin-bottom: 38px; text-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
+    opacity: 0; animation: riseIn 1s ease forwards; animation-delay: .6s;
+  }
+  .hero-actions { display: flex; gap: 18px; flex-wrap: wrap; opacity: 0; animation: riseIn 1s ease forwards; animation-delay: .8s; }
+  
+  @media (max-width: 720px) {
+    .hero { 
+      /* PASTE YOUR SAME DIRECT IMAGE URL IN THE url('...') BELOW FOR MOBILE */
+      background: linear-gradient(to top, rgba(0,0,0,0.65) 20%, rgba(0,0,0,0.1) 100%), url('YOUR_IMAGE_LINK_HERE') no-repeat 68% center; 
+      background-size: cover; 
+    }
+    .hero-content { padding: 0 22px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+    .hero-actions { justify-content: center; }
+  }
+
+  @keyframes riseIn { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+
+  .hero-scroll {
+    position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%); z-index: 2;
+    color: var(--cream); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    display: flex; flex-direction: column; align-items: center; gap: 10px; opacity: .85; pointer-events: none;
+  }
+  .hero-scroll .line { width: 1px; height: 38px; background: rgba(252,249,245,0.6); animation: scrollLine 2s ease-in-out infinite; }
+  @keyframes scrollLine { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+
+  /* ---------- section shared ---------- */
+  .section { padding: 130px 0; }
+  @media (max-width: 720px) { .section { padding: 80px 0; } }
+  .section-head { text-align: center; max-width: 600px; margin: 0 auto 64px; }
+  .section-head h2 { font-size: clamp(32px,4.4vw,52px); margin-bottom: 16px; }
+  .section-head p { font-size: 15px; line-height: 1.7; color: var(--charcoal-soft); }
+
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s ease, transform .8s ease; }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  /* ---------- categories ---------- */
+  .categories { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
+  @media (max-width: 1000px) { .categories { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 640px) { .categories { grid-template-columns: repeat(2, 1fr); } }
+  .cat-card {
+    position: relative; border-radius: var(--radius); overflow: hidden; aspect-ratio: 3/4;
+    box-shadow: var(--shadow-soft); cursor: pointer;
+  }
+  .cat-card .cat-bg {
+    position: absolute; inset: 0; transition: transform .7s cubic-bezier(.2,.8,.2,1);
+  }
+  .cat-card:hover .cat-bg { transform: scale(1.12); }
+  .cat-card::before {
+    content: ""; position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(180deg, transparent 40%, rgba(47,47,47,0.72) 100%);
+  }
+  .cat-card .cat-label {
+    position: absolute; left: 0; right: 0; bottom: 22px; z-index: 2; text-align: center;
+    color: var(--cream); font-family: 'Cormorant Garamond', serif; font-size: 21px; letter-spacing: 0.02em;
+  }
+  .cat-1 .cat-bg { background: linear-gradient(150deg,#7a2634,#3e1119); }
+  .cat-2 .cat-bg { background: linear-gradient(150deg,#e7dcc8,#c9b48f); }
+  .cat-3 .cat-bg { background: linear-gradient(150deg,#cbb9a3,#9c8567); }
+  .cat-4 .cat-bg { background: linear-gradient(150deg,#c5a8de,#8367a8); }
+  .cat-5 .cat-bg { background: linear-gradient(150deg,#d4b483,#8a6a3f); }
+
+  /* ---------- featured products ---------- */
+  .filter-bar { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; margin-bottom: 52px; }
+  .filter-btn {
+    border: 1px solid var(--line); padding: 10px 22px; border-radius: 999px;
+    font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--charcoal-soft); transition: all .3s ease;
+  }
+  .filter-btn:hover { border-color: var(--gold); color: var(--charcoal); }
+  .filter-btn.active { background: var(--charcoal); color: var(--cream); border-color: var(--charcoal); }
+
+  .product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+  @media (max-width: 1000px) { .product-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .product-grid { grid-template-columns: 1fr; } }
+
+  .product-card { position: relative; }
+  .product-media {
+    position: relative; aspect-ratio: 3/4; border-radius: var(--radius); overflow: hidden;
+    box-shadow: var(--shadow-soft); margin-bottom: 18px; background: var(--panel);
+  }
+  .product-face { position: absolute; inset: 0; transition: opacity .5s ease, transform .6s ease; }
+  .product-face.front { opacity: 1; }
+  .product-face.back { opacity: 0; transform: scale(1.05); }
+  .product-card:hover .product-face.front { opacity: 0; }
+  .product-card:hover .product-face.back { opacity: 1; }
+
+  .p-1 .front { background: linear-gradient(150deg,#7a2634,#3e1119); }
+  .p-1 .back { background: linear-gradient(150deg,#8f2e3d,#4e151f); }
+  .p-2 .front { background: linear-gradient(150deg,#c5a8de,#8367a8); }
+  .p-2 .back { background: linear-gradient(150deg,#d4bdea,#9678b8); }
+  .p-3 .front { background: linear-gradient(150deg,#d4b483,#8a6a3f); }
+  .p-3 .back { background: linear-gradient(150deg,#e2c99a,#a17f4e); }
+  .p-4 .front { background: linear-gradient(150deg,#e7dcc8,#c9b48f); }
+  .p-4 .back { background: linear-gradient(150deg,#efe6d6,#d6c4a1); }
+
+  .wishlist-toggle {
+    position: absolute; top: 14px; right: 14px; z-index: 3; width: 38px; height: 38px; border-radius: 50%;
+    background: rgba(252,249,245,0.9); display: flex; align-items: center; justify-content: center;
+    font-size: 16px; box-shadow: var(--shadow-soft); transition: transform .25s ease, background .25s ease;
+  }
+  .wishlist-toggle:hover { transform: scale(1.1); }
+  .wishlist-toggle.active { background: var(--lavender); }
+
+  .quick-add {
+    position: absolute; left: 14px; right: 14px; bottom: 14px; z-index: 3;
+    background: rgba(252,249,245,0.95); color: var(--charcoal); border-radius: 999px;
+    padding: 12px 0; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500;
+    opacity: 0; transform: translateY(10px); transition: opacity .35s ease, transform .35s ease;
+    box-shadow: var(--shadow-soft);
+  }
+  .product-card:hover .quick-add { opacity: 1; transform: translateY(0); }
+
+  .product-info h3 { font-size: 19px; margin-bottom: 6px; font-weight: 500; }
+  .product-info .price { font-family: 'Poppins',sans-serif; font-size: 14px; color: var(--charcoal-soft); }
+  .product-info .price .was { text-decoration: line-through; opacity: .55; margin-left: 8px; font-size: 13px; }
+
+  /* ---------- why la perlyn ---------- */
+  .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  @media (max-width: 800px) { .features { grid-template-columns: 1fr; } }
+  .feature-card {
+    background: var(--panel); border-radius: var(--radius); padding: 48px 36px; text-align: center;
+    box-shadow: var(--shadow-soft); transition: transform .35s ease, box-shadow .35s ease;
+  }
+  .feature-card:hover { transform: translateY(-6px); box-shadow: var(--shadow); }
+  .feature-icon { font-size: 34px; margin-bottom: 22px; }
+  .feature-card h3 { font-size: 23px; margin-bottom: 12px; }
+  .feature-card p { font-size: 14px; line-height: 1.7; color: var(--charcoal-soft); }
+
+  /* ---------- reviews ---------- */
+  .reviews { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  @media (max-width: 800px) { .reviews { grid-template-columns: 1fr; } }
+  .review-card {
+    background: var(--cream); border: 1px solid var(--line); border-radius: var(--radius); padding: 38px 32px;
+    box-shadow: var(--shadow-soft);
+  }
+  .review-stars { color: var(--gold); font-size: 15px; margin-bottom: 18px; letter-spacing: 2px; }
+  .review-card p.quote { font-family: 'Cormorant Garamond', serif; font-size: 19px; line-height: 1.55; margin-bottom: 22px; font-style: italic; }
+  .review-name { font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--charcoal-soft); }
+
+  /* ---------- newsletter ---------- */
+  .newsletter-wrap { padding: 0 48px; }
+  @media (max-width: 720px) { .newsletter-wrap { padding: 0 22px; } }
+  .newsletter-card {
+    max-width: 820px; margin: 0 auto; background: var(--panel); border-radius: 28px; padding: 80px 60px;
+    text-align: center; box-shadow: var(--shadow);
+  }
+  @media (max-width: 640px) { .newsletter-card { padding: 52px 26px; } }
+  .newsletter-card h2 { font-size: clamp(30px,4vw,44px); margin-bottom: 14px; }
+  .newsletter-card p { font-size: 15px; color: var(--charcoal-soft); margin-bottom: 36px; max-width: 44ch; margin-left: auto; margin-right: auto; }
+  .nl-form { display: flex; justify-content: center; gap: 12px; max-width: 440px; margin: 0 auto; flex-wrap: wrap; }
+  .nl-form input {
+    flex: 1; min-width: 200px; padding: 15px 22px; border: 1px solid var(--line); border-radius: 999px;
+    background: var(--cream); font-family: 'Poppins',sans-serif; font-size: 14px; color: var(--charcoal);
+  }
+  .nl-form input:focus { outline: 2px solid var(--lavender); outline-offset: 1px; }
+  .nl-note { margin-top: 16px; font-size: 13px; color: var(--gold); min-height: 18px; }
+
+  /* ---------- footer ---------- */
+  footer { padding: 90px 0 36px; }
+  .foot-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 64px; }
+  @media (max-width: 760px) { .foot-grid { grid-template-columns: 1fr 1fr; } }
+  .foot-logo { font-size: 32px; margin-bottom: 16px; }
+  .foot-grid p { font-size: 14px; color: var(--charcoal-soft); line-height: 1.7; max-width: 30ch; }
+  .foot-grid h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 18px; color: var(--gold); }
+  .foot-grid li { margin-bottom: 12px; font-size: 14px; color: var(--charcoal-soft); }
+  .foot-grid li a:hover { color: var(--charcoal); }
+  .foot-social { display: flex; gap: 16px; margin-top: 8px; }
+  .foot-social a {
+    width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: center; font-size: 13px; transition: all .3s ease;
+  }
+  .foot-social a:hover { background: var(--charcoal); color: var(--cream); border-color: var(--charcoal); }
+  .foot-bottom {
+    border-top: 1px solid var(--line); padding-top: 28px; display: flex; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px; font-size: 12px; color: var(--charcoal-soft); letter-spacing: 0.02em;
+  }
+
+  /* ---------- drawers ---------- */
+  .overlay {
+    position: fixed; inset: 0; background: rgba(47,47,47,0.45); z-index: 200; opacity: 0; pointer-events: none;
+    transition: opacity .35s ease;
+  }
+  .overlay.open { opacity: 1; pointer-events: auto; }
+  .drawer {
+    position: fixed; top: 0; right: 0; height: 100%; width: min(420px, 92vw); background: var(--cream);
+    z-index: 201; box-shadow: -14px 0 40px rgba(47,47,47,0.15); transform: translateX(100%);
+    transition: transform .4s cubic-bezier(.2,.8,.2,1); display: flex; flex-direction: column; padding: 34px 30px;
+  }
+  .drawer.open { transform: translateX(0); }
+  .drawer-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+  .drawer-head h3 { font-size: 24px; }
+  .drawer-close { font-size: 20px; color: var(--charcoal); }
+  .drawer-empty { color: var(--charcoal-soft); font-size: 14px; margin-top: 20px; }
+  
+  .search-box {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 201; background: var(--cream);
+    padding: 30px 48px; transform: translateY(-100%); transition: transform .4s cubic-bezier(.2,.8,.2,1);
+    box-shadow: var(--shadow);
+  }
+  .search-box.open { transform: translateY(0); }
+  .search-inner { max-width: var(--max); margin: 0 auto; display: flex; align-items: center; gap: 18px; }
+  .search-inner input {
+    flex: 1; border: none; border-bottom: 1px solid var(--line); background: transparent;
+    font-family: 'Cormorant Garamond', serif; font-size: 28px; padding: 10px 4px; color: var(--charcoal);
+  }
+  .search-inner input:focus { outline: none; border-color: var(--gold); }
+  .search-close { font-size: 20px; color: var(--charcoal); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  }
+  a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--lavender); outline-offset: 2px; }
+</style>
+</head>
+<body>
+
+<header id="siteHeader">
+  <div class="wrap nav">
+    <a class="nav-logo logo-font" href="#top">La Perlyn</a>
+    <nav class="nav-center">
+      <a href="#top">Home</a>
+      <a href="#categories">Collections</a>
+      <a href="#featured">Sarees</a>
+      <a href="#story">About</a>
+      <a href="#reviews">Journal</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="nav-right">
+      <button id="searchBtn" aria-label="Search">Search</button>
+      <button id="wishlistBtn" aria-label="Wishlist">Wishlist<span class="badge" id="wishCount">0</span></button>
+      <button id="cartBtn" aria-label="Cart">Cart<span class="badge" id="cartCount">0</span></button>
+      <button aria-label="Profile">Profile</button>
+      <button class="menu-btn" id="menuBtn" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    </div>
+  </div>
+  
+  <div class="nav-links-mobile" id="navMobile">
+    <a href="#top">Home</a>
+    <a href="#categories">Collections</a>
+    <a href="#featured">Sarees</a>
+    <a href="#story">About</a>
+    <a href="#reviews">Journal</a>
+    <a href="#contact">Contact</a>
+  </div>
+</header>
+
+<div class="search-box" id="searchBox">
+  <div class="search-inner">
+    <input type="text" placeholder="Search for sarees, collections, fabrics…" aria-label="Search">
+    <button class="search-close" id="searchClose">Close</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="cartDrawer">
+  <div class="drawer-head"><h3>Your Bag</h3><button class="drawer-close" data-close>Close</button></div>
+  <div id="cartItems"><p class="drawer-empty">Your bag is empty. Discover pieces you'll love in the collection.</p></div>
+</aside>
+<aside class="drawer" id="wishlistDrawer">
+  <div class="drawer-head"><h3>Wishlist</h3><button class="drawer-close" data-close>Close</button></div>
+  <div id="wishlistItems"><p class="drawer-empty">Nothing saved yet — tap the heart on any piece to save it here.</p></div>
+</aside>
+
+<main id="top">
+
+  <!-- Full Saree Image Background Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <span class="eyebrow">La Perlyn — Handcrafted Sarees</span>
+      <h1>Timeless Elegance,<br>Woven for Every Story.</h1>
+      <p>Discover handcrafted sarees designed to celebrate tradition with modern sophistication.</p>
+      <div class="hero-actions">
+        <a class="btn btn-outline" href="#featured">Shop Collection</a>
+        <a class="btn btn-outline" href="#categories">Explore New Arrivals</a>
+      </div>
+    </div>
+    
+    <div class="hero-scroll"><span>Scroll</span><span class="line"></span></div>
+  </section>
+
+  <section class="section" id="categories">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Curated for you</span>
+        <h2>Shop by Collection</h2>
+        <p>Five ways to wear La Perlyn — each edit shaped around a fabric and a feeling.</p>
+      </div>
+      <div class="categories reveal">
+        <a class="cat-card cat-1"><div class="cat-bg"></div><span class="cat-label">Silk Sarees</span></a>
+        <a class="cat-card cat-2"><div class="cat-bg"></div><span class="cat-label">Cotton Sarees</span></a>
+        <a class="cat-card cat-3"><div class="cat-bg"></div><span class="cat-label">Linen Sarees</span></a>
+        <a class="cat-card cat-4"><div class="cat-bg"></div><span class="cat-label">Festive Collection</span></a>
+        <a class="cat-card cat-5"><div class="cat-bg"></div><span class="cat-label">Wedding Collection</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="featured" style="background:var(--panel);">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">The Edit</span>
+        <h2>Featured Collection</h2>
+        <p>Pieces chosen for their weave, their drape, and the occasions they're made for.</p>
+      </div>
+      <div class="filter-bar reveal">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="silk">Silk</button>
+        <button class="filter-btn" data-filter="cotton">Cotton</button>
+        <button class="filter-btn" data-filter="linen">Linen</button>
+        <button class="filter-btn" data-filter="festive">Festive</button>
+      </div>
+      <div class="product-grid reveal" id="productGrid">
+        <div class="product-card" data-category="silk" data-name="Amaya Banarasi Silk" data-price="18,900">
+          <div class="product-media p-1">
+            <button class="wishlist-toggle" aria-label="Add to wishlist">♡</button>
+            <div class="product-face front"></div>
+            <div class="product-face back"></div>
+            <button class="quick-add">Quick Add</button>
+          </div>
+          <div class="product-info">
+            <h3>Amaya Banarasi Silk</h3>
+            <div class="price">₹18,900 <span class="was">₹24,500</span></div>
+          </div>
+        </div>
+        <div class="product-card" data-category="festive" data-name="Meher Lavender Organza" data-price="14,200">
+          <div class="product-media p-2">
+            <button class="wishlist-toggle" aria-label="Add to wishlist">♡</button>
+            <div class="product-face front"></div>
+            <div class="product-face back"></div>
+            <button class="quick-add">Quick Add</button>
+          </div>
+          <div class="product-info">
+            <h3>Meher Lavender Organza</h3>
+            <div class="price">₹14,200</div>
+          </div>
+        </div>
+        <div class="product-card" data-category="silk" data-name="Ishaani Champagne Tissue" data-price="21,500">
+          <div class="product-media p-3">
+            <button class="wishlist-toggle" aria-label="Add to wishlist">♡</button>
+            <div class="product-face front"></div>
+            <div class="product-face back"></div>
+            <button class="quick-add">Quick Add</button>
+          </div>
+          <div class="product-info">
+            <h3>Ishaani Champagne Tissue</h3>
+            <div class="price">₹21,500</div>
+          </div>
+        </div>
+        <div class="product-card" data-category="cotton" data-name="Noor Ivory Handloom Cotton" data-price="6,800">
+          <div class="product-media p-4">
+            <button class="wishlist-toggle" aria-label="Add to wishlist">♡</button>
+            <div class="product-face front"></div>
+            <div class="product-face back"></div>
+            <button class="quick-add">Quick Add</button>
+          </div>
+          <div class="product-info">
+            <h3>Noor Ivory Handloom Cotton</h3>
+            <div class="price">₹6,800</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="story">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Why La Perlyn</span>
+        <h2>Crafted with Intention</h2>
+      </div>
+      <div class="features reveal">
+        <div class="feature-card">
+          <div class="feature-icon">✨</div>
+          <h3>Premium Fabrics</h3>
+          <p>Silks, linens, and cottons sourced for their weight, sheen, and drape — never for shortcuts.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🧵</div>
+          <h3>Handcrafted Excellence</h3>
+          <p>Every border and motif carries the hand of the artisan who made it — nothing mass-produced.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🚚</div>
+          <h3>Worldwide Shipping</h3>
+          <p>Insured, tracked delivery to your door, wherever your story is being written.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="reviews" style="background:var(--panel);">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Loved, Worn, Cherished</span>
+        <h2>What Our Customers Say</h2>
+      </div>
+      <div class="reviews reveal">
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="quote">"The drape alone tells you this isn't ordinary. It felt like it was made for me."</p>
+          <div class="review-name">— Ananya R.</div>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="quote">"Wore it to my sister's wedding and haven't stopped receiving compliments since."</p>
+          <div class="review-name">— Priya M.</div>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="quote">"Quiet luxury, exactly as promised. The packaging alone felt like a gift."</p>
+          <div class="review-name">— Divya K.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="contact">
+    <div class="newsletter-wrap">
+      <div class="newsletter-card reveal">
+        <span class="eyebrow">Join the List</span>
+        <h2>Stay Connected.</h2>
+        <p>Be the first to discover new collections and exclusive launches.</p>
+        <form class="nl-form" id="nlForm">
+          <input type="email" id="nlEmail" placeholder="Your email address" required aria-label="Email address">
+          <button class="btn btn-solid" type="submit">Subscribe</button>
+        </form>
+        <div class="nl-note" id="nlNote"></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-logo logo-font">La Perlyn</div>
+        <p>Handcrafted sarees, woven with tradition and worn with modern grace.</p>
+        <div class="foot-social">
+          <a href="#" aria-label="Instagram">IG</a>
+          <a href="#" aria-label="Pinterest">P</a>
+        </div>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="#categories">Collections</a></li>
+          <li><a href="#featured">Sarees</a></li>
+          <li><a href="#categories">Festive</a></li>
+          <li><a href="#categories">Wedding</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#story">About</a></li>
+          <li><a href="#">Shipping</a></li>
+          <li><a href="#">Returns</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:hello@laperlyn.example">hello@laperlyn.example</a></li>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">Pinterest</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 La Perlyn. All rights reserved.</span>
+      <span>Designed for those who wear their story.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // sticky navbar
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // mobile menu toggle
+  const menuBtn = document.getElementById('menuBtn');
+  const navMobile = document.getElementById('navMobile');
+  menuBtn.addEventListener('click', () => {
+    const isOpen = navMobile.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', isOpen);
+  });
+  
+  navMobile.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      navMobile.classList.remove('open');
+      menuBtn.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  // search toggle
+  const searchBtn = document.getElementById('searchBtn');
+  const searchBox = document.getElementById('searchBox');
+  const searchClose = document.getElementById('searchClose');
+  searchBtn.addEventListener('click', () => {
+    searchBox.classList.add('open');
+    searchBox.querySelector('input').focus();
+  });
+  searchClose.addEventListener('click', () => searchBox.remove('open'));
+
+  // drawers (cart / wishlist)
+  const overlay = document.getElementById('overlay');
+  const cartDrawer = document.getElementById('cartDrawer');
+  const wishlistDrawer = document.getElementById('wishlistDrawer');
+  const cartBtn = document.getElementById('cartBtn');
+  const wishlistBtn = document.getElementById('wishlistBtn');
+  const cartCountEl = document.getElementById('cartCount');
+  const wishCountEl = document.getElementById('wishCount');
+  const cartItemsEl = document.getElementById('cartItems');
+  const wishlistItemsEl = document.getElementById('wishlistItems');
+
+  let cart = [];
+  let wishlist = [];
+
+  function openDrawer(drawer){
+    overlay.classList.add('open');
+    drawer.classList.add('open');
+  }
+  function closeDrawers(){
+    overlay.classList.remove('open');
+    cartDrawer.classList.remove('open');
+    wishlistDrawer.classList.remove('open');
+  }
+  cartBtn.addEventListener('click', () => openDrawer(cartDrawer));
+  wishlistBtn.addEventListener('click', () => openDrawer(wishlistDrawer));
+  overlay.addEventListener('click', closeDrawers);
+  document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closeDrawers));
+
+  function renderCart(){
+    cartCountEl.textContent = cart.length;
+    cartItemsEl.innerHTML = cart.length
+      ? cart.map(i => `<div style="display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--line);font-size:14px;"><span>${i.name}</span><span>₹${i.price}</span></div>`).join('')
+      : `<p class="drawer-empty">Your bag is empty. Discover pieces you'll love in the collection.</p>`;
+  }
+  function renderWishlist(){
+    wishCountEl.textContent = wishlist.length;
+    wishlistItemsEl.innerHTML = wishlist.length
+      ? wishlist.map(i => `<div style="display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--line);font-size:14px;"><span>${i.name}</span><span>₹${i.price}</span></div>`).join('')
+      : `<p class="drawer-empty">Nothing saved yet — tap the heart on any piece to save it here.</p>`;
+  }
+
+  document.querySelectorAll('.quick-add').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const card = e.target.closest('.product-card');
+      cart.push({ name: card.dataset.name, price: card.dataset.price });
+      renderCart();
+      btn.textContent = 'Added';
+      setTimeout(() => btn.textContent = 'Quick Add', 1200);
+    });
+  });
+
+  document.querySelectorAll('.wishlist-toggle').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const card = e.target.closest('.product-card');
+      const active = btn.classList.toggle('active');
+      btn.textContent = active ? '♥' : '♡';
+      if (active) {
+        wishlist.push({ name: card.dataset.name, price: card.dataset.price });
+      } else {
+        wishlist = wishlist.filter(i => i.name !== card.dataset.name);
+      }
+      renderWishlist();
+    });
+  });
+
+  // product filtering
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const productCards = document.querySelectorAll('.product-card');
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      productCards.forEach(card => {
+        const show = filter === 'all' || card.dataset.category === filter;
+        card.style.display = show ? '' : 'none';
+      });
+    });
+  });
+
+  // scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => io.observe(el));
+
+  // newsletter
+  const nlForm = document.getElementById('nlForm');
+  const nlNote = document.getElementById('nlNote');
+  nlForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('nlEmail').value;
+    if (email) {
+      nlNote.textContent = "You're on the list — welcome to La Perlyn.";
+      nlForm.reset();
+    }
+  });
+</script>
+
+</body>
 </html>
